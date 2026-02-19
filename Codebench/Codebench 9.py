@@ -14,7 +14,7 @@ def main():
         b = int(input())
         if a == 0 or b == 0:
             break
-        resultados.append(calcular_mdc(a, b))
+        resultados.append(Mdc(a, b))
         
     for res in resultados:print(res)
 
