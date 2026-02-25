@@ -1,0 +1,45 @@
+@startuml Compra
+
+|Cliente|
+start
+:Selecionar itens;
+:Informar CEP;
+
+|Sistema|
+:Calcula Frete;
+|Objeto|
+#lightblue:Carrinho de Compras <<Novo>>;
+
+'Decisão e validação para cupom'
+|Cliente|
+if (Usar cupom?) then(sim)
+    :Inserir cupom;
+    |Objeto|
+    #lightblue:Cupom <<Novo>>;
+
+    |Sistema|
+    :Validar cupom;
+    |Objeto|
+    #lightblue:Cupom <<Consulta>>;
+    |Sistema|
+    if (Cupom Valido?) then (sim)
+        :Aplicar desconto;
+    else (não)
+        :Informar erro;
+    endif
+else (não)
+endif
+
+|Sistema|
+:Calcular Total;
+
+|Cliente|
+:Confirma compra;
+
+|Sistema|
+:Registra pedido;
+
+|Objeto|
+#lightblue:Pedido <<Novo>>;
+stop
+@enduml
