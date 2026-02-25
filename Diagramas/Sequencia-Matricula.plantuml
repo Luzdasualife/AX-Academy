@@ -1,0 +1,45 @@
+@startuml Matricula
+skinparam maxMessageSize 300
+autonumber
+
+actor Aluno
+Boundary "Portal de Matrícula" as Sis
+Control "Serviço de\nValidação" as Val
+Entity "Sistema de\nAuditoria" as Aud
+Entity "Sistema de\nCobrança" as Cob
+
+Aluno -> Sis: Iniciar solicitação de matrícula()
+activate Sis
+
+== Seleção de Disciplinas ==
+loop Para cada disciplina desejada
+    Aluno -> Sis: Adicionar disciplina(id_disciplina)
+    Sis --> Aluno: Confirma adição na grade temporária
+end
+
+Aluno -> Sis: Submeter matrícula()
+
+== Validação e Auditoria (Processamento Paralelo) ==
+par Tarefas Independentes
+    Sis -> Val: Validar pré-requisitos e conflitos de horário()
+    activate Val
+    Val --> Sis: Retorna status (Validação OK)
+    deactivate Val
+else
+    Sis -> Aud: Registrar log de tentativa de matrícula(dados_aluno)
+    activate Aud
+    Aud --> Sis: Confirmação de log registrado
+    deactivate Aud
+end
+
+== Faturamento ==
+opt Caso o aluno selecione serviço extra (Taxa Opcional)
+    Sis -> Cob: Processar taxa opcional (ex: material didático)
+    activate Cob
+    Cob --> Sis: Retorna confirmação/boleto da taxa
+    deactivate Cob
+end
+
+Sis --> Aluno: Confirmação de Matrícula concluída
+deactivate Sis
+@enduml
